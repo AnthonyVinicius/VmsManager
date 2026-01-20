@@ -4,7 +4,7 @@
     <a routerLink="/dashboard">Voltar</a>
   </div>
 
-  <form [formGroup]="form">
+  <form [formGroup]="form" (ngSubmit)="submit()">
     <label for="nome">Nome</label>
     <input id="nome" type="text" formControlName="nome" placeholder="Ex: VM Produção 01" />
     <small *ngIf="form.controls.nome.touched && form.controls.nome.invalid">
@@ -34,6 +34,6 @@
     <p class="success" *ngIf="successMsg">{{ successMsg }}</p>
     <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
 
-<app-button [fullWidth]="true">Criar VM</app-button>
+<app-button type="submit" [fullWidth]="true">Criar VM</app-button>
   </form>
 </div>
