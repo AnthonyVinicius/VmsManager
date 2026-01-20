@@ -1,0 +1,40 @@
+<div class="card">
+  <h2>Login</h2>
+
+  <form [formGroup]="form" autocomplete="on">
+    <label for="email">Email</label>
+    <input
+      id="email"
+      type="email"
+      formControlName="email"
+      name="username"
+      autocomplete="username"
+      placeholder="seu@email.com"
+    />
+    <small *ngIf="form.controls.email.touched && form.controls.email.invalid">
+      Informe um email válido.
+    </small>
+
+    <label for="senha">Senha</label>
+    <input
+      id="senha"
+      type="password"
+      formControlName="senha"
+      name="password"
+      autocomplete="current-password"
+      placeholder="******"
+    />
+    <small *ngIf="form.controls.senha.touched && form.controls.senha.invalid">
+      Senha deve ter pelo menos 6 caracteres.
+    </small>
+
+    <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
+
+    <app-button [fullWidth]="true" [routerLink]="['/dashboard']"> Entrar </app-button>
+  </form>
+
+  <p class="hint">
+    Não tem conta?
+    <a routerLink="/register">Cadastre-se</a>
+  </p>
+</div>

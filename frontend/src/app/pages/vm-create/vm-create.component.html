@@ -1,0 +1,39 @@
+<div class="card">
+  <div class="top">
+    <h2>Nova VM</h2>
+    <a routerLink="/dashboard">Voltar</a>
+  </div>
+
+  <form [formGroup]="form">
+    <label for="nome">Nome</label>
+    <input id="nome" type="text" formControlName="nome" placeholder="Ex: VM Produção 01" />
+    <small *ngIf="form.controls.nome.touched && form.controls.nome.invalid">
+      Nome deve ter no mínimo 5 caracteres.
+    </small>
+
+    <div class="grid">
+      <div>
+        <label for="cpu">CPU</label>
+        <input id="cpu" type="number" formControlName="cpu" min="1" />
+        <small *ngIf="form.controls.cpu.touched && form.controls.cpu.invalid">Mínimo 1.</small>
+      </div>
+
+      <div>
+        <label for="memoria">Memória</label>
+        <input id="memoria" type="number" formControlName="memoria" min="1" />
+        <small *ngIf="form.controls.memoria.touched && form.controls.memoria.invalid">Mínimo 1.</small>
+      </div>
+
+      <div>
+        <label for="disco">Disco</label>
+        <input id="disco" type="number" formControlName="disco" min="1" />
+        <small *ngIf="form.controls.disco.touched && form.controls.disco.invalid">Mínimo 1.</small>
+      </div>
+    </div>
+
+    <p class="success" *ngIf="successMsg">{{ successMsg }}</p>
+    <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
+
+<app-button [fullWidth]="true">Criar VM</app-button>
+  </form>
+</div>

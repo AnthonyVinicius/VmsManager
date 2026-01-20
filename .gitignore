@@ -9,7 +9,7 @@ bin/
 .apt_generated/
 .factorypath/
 .sts4-cache/
-/.angular/cache
+.angular
 
 node_modules/
 /typings/

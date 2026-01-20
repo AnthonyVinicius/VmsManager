@@ -1,0 +1,33 @@
+<div class="card">
+  <h2>Cadastro</h2>
+
+  <form [formGroup]="form">
+    <label>Nome</label>
+    <input type="text" formControlName="nome" placeholder="Seu nome completo" />
+    <small *ngIf="form.controls.nome.touched && form.controls.nome.invalid">
+      Nome deve ter pelo menos 5 caracteres.
+    </small>
+
+    <label>Email</label>
+    <input type="email" formControlName="email" placeholder="seu@email.com" />
+    <small *ngIf="form.controls.email.touched && form.controls.email.invalid">
+      Informe um email válido.
+    </small>
+
+    <label>Senha</label>
+    <input type="password" formControlName="senha" placeholder="******" />
+    <small *ngIf="form.controls.senha.touched && form.controls.senha.invalid">
+      Senha deve ter pelo menos 6 caracteres.
+    </small>
+
+    <p class="success" *ngIf="successMsg">{{ successMsg }}</p>
+    <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
+
+    <app-button [fullWidth]="true" [routerLink]="['/login']"> Cadastar-se</app-button>
+  </form>
+
+  <p class="hint">
+    Já tem conta?
+    <a routerLink="/login">Entrar</a>
+  </p>
+</div>

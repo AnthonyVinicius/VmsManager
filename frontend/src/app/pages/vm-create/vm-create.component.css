@@ -1,0 +1,66 @@
+.card { 
+    max-width: 380px; 
+    margin: 40px auto; 
+    padding: 18px; 
+    border: 1px solid #ddd; 
+    border-radius: 10px;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.3); 
+}
+
+form { 
+    display: grid; 
+    gap: 10px; 
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;          
+}
+ 
+
+input, select {
+  width: 100%;                
+  padding: 10px;
+  font-size: 14px;
+  box-sizing: border-box;
+      box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.3);
+    border: 1px solid #ddd; 
+    border-radius: 10px;       
+}
+
+.grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+
+small {
+  color: #b00020;
+  word-break: break-word;
+}
+
+.error {
+  color: #b00020;
+  margin: 0;
+}
+
+.success {
+  color: #0a7a2f;
+  margin: 0;
+}
+
+
+@media (max-width: 700px) {
+  .card {
+    margin: 12px;
+    padding: 14px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr; 
+  }
+}

@@ -1,0 +1,79 @@
+<div class="content">
+  <div class="top">
+    <h2>Dashboard</h2>
+
+    <div class="actions">
+      <app-button routerLink="/vmCreate"> + Adicionar VM </app-button>
+    </div>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="label">Total de VMs</div>
+    </div>
+
+    <div class="card">
+      <div class="label">Running</div>
+      <div class="value">START</div>
+      <div class="hint">START</div>
+    </div>
+
+    <div class="card">
+      <div class="label">Stopped</div>
+      <div class="value">STOP</div>
+      <div class="hint">STOP</div>
+    </div>
+
+    <div class="card">
+      <div class="label">Suspended</div>
+      <div class="value">SUSPEND</div>
+      <div class="hint">SUSPEND</div>
+    </div>
+  </div>
+  <div class="charts">
+    <div class="panel">
+      <h3>Status das VMs</h3>
+      <canvas #statusBarCanvas></canvas>
+    </div>
+
+    <div class="panel">
+      <h3>Limite de Capacidade (máx 5)</h3>
+      <canvas #capacityPieCanvas></canvas>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>VMs</h3>
+
+    <div class="empty">Nenhuma VM cadastrada ainda.</div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>CPU</th>
+          <th>Memória</th>
+          <th>Disco</th>
+          <th>Status</th>
+          <th>Criada em</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+
+          <td class="actions-col">
+            <app-button> Editar </app-button>
+            <app-button> Deletar </app-button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
