@@ -3,6 +3,7 @@ package com.claro.vmsmanager.services;
 import com.claro.vmsmanager.dtos.UserCreateDTO;
 import com.claro.vmsmanager.dtos.UserResponseDTO;
 import com.claro.vmsmanager.dtos.UserUpdateDTO;
+import com.claro.vmsmanager.entities.Role;
 import com.claro.vmsmanager.entities.User;
 import com.claro.vmsmanager.exceptions.EmailAlreadyExistsException;
 import com.claro.vmsmanager.exceptions.ResourceNotFoundException;
@@ -54,10 +55,12 @@ public class UserServiceImpl implements UserService {
         user.setEmail(dto.getEmail());
         user.setSenha(passwordEncoder.encode(dto.getSenha()));
 
+        user.setRole(dto.getRole() != null ? dto.getRole() : Role.USER);
+
         User saved = repository.save(user);
         return UserMapper.toDTO(saved);
     }
-
+    
     @Override
     @Transactional
     public UserResponseDTO update(Long id, UserUpdateDTO dto) {

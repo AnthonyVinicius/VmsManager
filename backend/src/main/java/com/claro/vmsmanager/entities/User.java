@@ -35,4 +35,9 @@ public class User {
     @Size(min = 6, message = "Senha deve ter no mínimo 6 caracteres")
     @Column(nullable = false)
     private String senha;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
 }

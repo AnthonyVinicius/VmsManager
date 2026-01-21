@@ -20,6 +20,8 @@ import java.util.List;
 @Service
 public class VirtualMachineServiceImpl implements VirtualMachineService {
 
+    private static final int VM_LIMIT = 5;
+
     private final VirtualMachineRepository repository;
     private final UserRepository userRepository;
 
@@ -31,6 +33,14 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
     @Override
     @Transactional(readOnly = true)
     public List<VirtualMachineResponseDTO> getAll() {
+
+        if (SecurityUtils.isAdmin()) {
+            return repository.findAll()
+                    .stream()
+                    .map(VirtualMachineMapper::toDTO)
+                    .toList();
+        }
+
         Long userId = SecurityUtils.getLoggedUserId();
         return repository.findByUser_Id(userId)
                 .stream()
@@ -41,10 +51,12 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
     @Override
     @Transactional(readOnly = true)
     public VirtualMachineResponseDTO getById(Long id) {
-        Long userId = SecurityUtils.getLoggedUserId();
 
-        if (!repository.existsByIdAndUser_Id(id, userId)) {
-            throw new ResourceNotFoundException("Máquina virtual não encontrada: id=" + id);
+        if (!SecurityUtils.isAdmin()) {
+            Long userId = SecurityUtils.getLoggedUserId();
+            if (!repository.existsByIdAndUser_Id(id, userId)) {
+                throw new ResourceNotFoundException("Máquina virtual não encontrada: id=" + id);
+            }
         }
 
         VirtualMachine vm = repository.findById(id)
@@ -58,9 +70,11 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
     public VirtualMachineResponseDTO create(VirtualMachineCreateDTO dto) {
         Long userId = SecurityUtils.getLoggedUserId();
 
-        long total = repository.countByUser_Id(userId);
-        if (total >= 5) {
-            throw new BusinessException("Limite atingido: você já possui 5 VMs cadastradas.");
+        if (!SecurityUtils.isAdmin()) {
+            long total = repository.countByUser_Id(userId);
+            if (total >= VM_LIMIT) {
+                throw new BusinessException("Limite atingido: você já possui 5 VMs cadastradas.");
+            }
         }
 
         User user = userRepository.findById(userId)
@@ -76,10 +90,12 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
     @Override
     @Transactional
     public VirtualMachineResponseDTO update(Long id, VirtualMachineUpdateDTO dto) {
-        Long userId = SecurityUtils.getLoggedUserId();
 
-        if (!repository.existsByIdAndUser_Id(id, userId)) {
-            throw new ResourceNotFoundException("Máquina virtual não encontrada: id=" + id);
+        if (!SecurityUtils.isAdmin()) {
+            Long userId = SecurityUtils.getLoggedUserId();
+            if (!repository.existsByIdAndUser_Id(id, userId)) {
+                throw new ResourceNotFoundException("Máquina virtual não encontrada: id=" + id);
+            }
         }
 
         VirtualMachine existing = repository.findById(id)
@@ -97,10 +113,12 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
     @Override
     @Transactional
     public VirtualMachineResponseDTO updateStatus(Long id, UpdateStatusRequestDTO dto) {
-        Long userId = SecurityUtils.getLoggedUserId();
 
-        if (!repository.existsByIdAndUser_Id(id, userId)) {
-            throw new ResourceNotFoundException("Máquina virtual não encontrada: id=" + id);
+        if (!SecurityUtils.isAdmin()) {
+            Long userId = SecurityUtils.getLoggedUserId();
+            if (!repository.existsByIdAndUser_Id(id, userId)) {
+                throw new ResourceNotFoundException("Máquina virtual não encontrada: id=" + id);
+            }
         }
 
         VirtualMachine existing = repository.findById(id)
@@ -115,10 +133,12 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
     @Override
     @Transactional
     public void delete(Long id) {
-        Long userId = SecurityUtils.getLoggedUserId();
 
-        if (!repository.existsByIdAndUser_Id(id, userId)) {
-            throw new ResourceNotFoundException("Máquina virtual não encontrada: id=" + id);
+        if (!SecurityUtils.isAdmin()) {
+            Long userId = SecurityUtils.getLoggedUserId();
+            if (!repository.existsByIdAndUser_Id(id, userId)) {
+                throw new ResourceNotFoundException("Máquina virtual não encontrada: id=" + id);
+            }
         }
 
         VirtualMachine existing = repository.findById(id)

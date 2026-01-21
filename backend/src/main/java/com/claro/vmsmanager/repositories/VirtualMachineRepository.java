@@ -9,5 +9,4 @@ public interface VirtualMachineRepository extends JpaRepository<VirtualMachine, 
     List<VirtualMachine> findByUser_Id(Long userId);
     boolean existsByIdAndUser_Id(Long id, Long userId);
     long countByUser_Id(Long userId);
-
 }

@@ -14,4 +14,13 @@ public class SecurityUtils {
 
         return Long.valueOf(auth.getPrincipal().toString());
     }
+
+    public static boolean isAdmin() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null) return false;
+
+        return auth.getAuthorities()
+                .stream()
+                .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+    }
 }
