@@ -18,7 +18,7 @@ export interface VmCreateDTO {
   cpu: number;
   memoria: number;
   disco: number;
-  status?: 'START' | 'STOP' | 'SUSPEND';
+  status: 'STOP';
 }
 
 export interface VmUpdateDTO {

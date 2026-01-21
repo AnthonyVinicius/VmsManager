@@ -1,9 +1,11 @@
 package com.claro.vmsmanager.services;
 
 import com.claro.vmsmanager.dtos.*;
+import com.claro.vmsmanager.entities.User;
 import com.claro.vmsmanager.entities.VirtualMachine;
 import com.claro.vmsmanager.exceptions.ResourceNotFoundException;
 import com.claro.vmsmanager.mapper.VirtualMachineMapper;
+import com.claro.vmsmanager.repositories.UserRepository;
 import com.claro.vmsmanager.repositories.VirtualMachineRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,9 +16,11 @@ import java.util.List;
 public class VirtualMachineServiceImpl implements VirtualMachineService {
 
     private final VirtualMachineRepository repository;
+    private final UserRepository userRepository;
 
-    public VirtualMachineServiceImpl(VirtualMachineRepository repository) {
+    public VirtualMachineServiceImpl(VirtualMachineRepository repository, UserRepository userRepository) {
         this.repository = repository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -38,10 +42,23 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
 
     @Override
     @Transactional
-    public VirtualMachineResponseDTO create(VirtualMachineCreateDTO dto) {
+    public VirtualMachineResponseDTO create(VirtualMachineCreateDTO dto, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado: id=" + userId));
+
         VirtualMachine vm = VirtualMachineMapper.toEntity(dto);
+        vm.setUser(user);
+
         VirtualMachine saved = repository.save(vm);
         return VirtualMachineMapper.toDTO(saved);
+    }
+    @Override
+    @Transactional(readOnly = true)
+    public List<VirtualMachineResponseDTO> getAllByUser(Long userId) {
+        return repository.findByUserId(userId)
+                .stream()
+                .map(VirtualMachineMapper::toDTO)
+                .toList();
     }
 
     @Override

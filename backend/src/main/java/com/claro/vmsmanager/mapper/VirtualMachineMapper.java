@@ -9,7 +9,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class VirtualMachineMapper {
 
-    public VirtualMachineResponseDTO toDTO(VirtualMachine vm) {
+    public static VirtualMachineResponseDTO toDTO(VirtualMachine vm) {
         return new VirtualMachineResponseDTO(
                 vm.getId(),
                 vm.getNome(),
@@ -17,7 +17,8 @@ public class VirtualMachineMapper {
                 vm.getMemoria(),
                 vm.getDisco(),
                 vm.getStatus(),
-                vm.getDataCriacao()
+                vm.getDataCriacao(),
+                vm.getUser() != null ? vm.getUser().getId() : null
         );
     }
 
