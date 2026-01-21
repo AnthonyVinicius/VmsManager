@@ -1,0 +1,71 @@
+<div class="card">
+  <div class="top">
+    <div>
+      <h2>Editar VM</h2>
+      <p class="sub" *ngIf="vm">
+        {{ vm.nome }} • ID: {{ vm.id }} • Criada em:
+        {{ vm.dataCriacao | date: "dd/MM/yyyy HH:mm" }}
+      </p>
+    </div>
+
+    <div class="top-actions">
+      <a [routerLink]="['/dashboard']">Voltar</a>
+    </div>
+  </div>
+
+  <div *ngIf="loading">Carregando...</div>
+
+  <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
+  <p class="success" *ngIf="successMsg">{{ successMsg }}</p>
+
+  <form *ngIf="!loading" [formGroup]="form" (ngSubmit)="submit()">
+    <label for="nome">Nome</label>
+    <input id="nome" type="text" formControlName="nome" />
+    <small *ngIf="form.controls.nome.touched && form.controls.nome.invalid">
+      Nome obrigatório (mínimo 5 caracteres).
+    </small>
+
+    <div class="grid">
+      <div>
+        <label for="cpu">CPU</label>
+        <input id="cpu" type="number" min="1" formControlName="cpu" />
+        <small *ngIf="form.controls.cpu.touched && form.controls.cpu.invalid">
+          Mínimo 1.
+        </small>
+      </div>
+
+      <div>
+        <label for="memoria">Memória (GB)</label>
+        <input
+          id="memoria"
+          type="number"
+          min="1"
+          formControlName="memoria"
+        />
+        <small
+          *ngIf="form.controls.memoria.touched && form.controls.memoria.invalid"
+        >
+          Mínimo 1.
+        </small>
+      </div>
+
+      <div>
+        <label for="disco">Disco (GB)</label>
+        <input id="disco" type="number" min="1" formControlName="disco" />
+        <small *ngIf="form.controls.disco.touched && form.controls.disco.invalid">
+          Mínimo 1.
+        </small>
+      </div>
+    </div>
+
+    <div class="actions">
+      <app-button type="submit">
+        Salvar alterações
+      </app-button>
+
+      <app-button [routerLink]="'/dashboard'">
+      Cancelar 
+      </app-button>
+    </div>
+  </form>
+</div>
