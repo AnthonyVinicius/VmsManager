@@ -1,7 +1,7 @@
 <div class="card">
   <h2>Login</h2>
 
-  <form [formGroup]="form" autocomplete="on">
+  <form [formGroup]="form" (ngSubmit)="submit()" autocomplete="on">
     <label for="email">Email</label>
     <input
       id="email"
@@ -30,7 +30,7 @@
 
     <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
 
-    <app-button [fullWidth]="true" [routerLink]="['/dashboard']"> Entrar </app-button>
+    <app-button type="submit" [fullWidth]="true" > Entrar </app-button>
   </form>
 
   <p class="hint">

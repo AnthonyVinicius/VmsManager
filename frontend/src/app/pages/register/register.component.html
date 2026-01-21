@@ -1,7 +1,7 @@
 <div class="card">
   <h2>Cadastro</h2>
 
-  <form [formGroup]="form">
+  <form [formGroup]="form" (ngSubmit)="submit()">
     <label>Nome</label>
     <input type="text" formControlName="nome" placeholder="Seu nome completo" />
     <small *ngIf="form.controls.nome.touched && form.controls.nome.invalid">
@@ -23,7 +23,7 @@
     <p class="success" *ngIf="successMsg">{{ successMsg }}</p>
     <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
 
-    <app-button [fullWidth]="true" [routerLink]="['/login']"> Cadastar-se</app-button>
+    <app-button type="submit" [fullWidth]="true" > Cadastar-se</app-button>
   </form>
 
   <p class="hint">

@@ -1,3 +1,9 @@
 <header class="header">
   <h1 class="logo">VMS Manager</h1>
+
+  <nav *ngIf="isLogged()">
+    <button class="btn" routerLink="/dashboard">Home</button>
+    <button class="btn" (click)="logout()">Logout</button>
+  </nav>
 </header>
+

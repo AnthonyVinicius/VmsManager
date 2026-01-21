@@ -2,31 +2,38 @@
   <div class="top">
     <h2>Dashboard</h2>
 
-    <div class="actions">
+   <div class="actions">
       <app-button routerLink="/vmCreate"> + Adicionar VM </app-button>
     </div>
+
+    <small class="warn" *ngIf="totals.total >= 5">
+      Limite máximo de 5 VMs atingido.
+    </small>
   </div>
+
+  <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
 
   <div class="cards">
     <div class="card">
       <div class="label">Total de VMs</div>
+      <div class="value">{{ totals.total }}</div>
     </div>
 
     <div class="card">
       <div class="label">Running</div>
-      <div class="value">START</div>
+      <div class="value">{{ totals.START }}</div>
       <div class="hint">START</div>
     </div>
 
     <div class="card">
       <div class="label">Stopped</div>
-      <div class="value">STOP</div>
+      <div class="value">{{ totals.STOP }}</div>
       <div class="hint">STOP</div>
     </div>
 
     <div class="card">
       <div class="label">Suspended</div>
-      <div class="value">SUSPEND</div>
+      <div class="value">{{ totals.SUSPEND }}</div>
       <div class="hint">SUSPEND</div>
     </div>
   </div>
@@ -45,9 +52,11 @@
   <div class="panel">
     <h3>VMs</h3>
 
-    <div class="empty">Nenhuma VM cadastrada ainda.</div>
+    <div class="empty" *ngIf="!loading && latestVms.length === 0">
+      Nenhuma VM cadastrada ainda.
+    </div>
 
-    <table>
+    <table *ngIf="latestVms.length > 0">
       <thead>
         <tr>
           <th>Nome</th>
@@ -60,17 +69,44 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
+        <tr *ngFor="let vm of latestVms">
+          <td>
+            <a
+              class="link"
+              [routerLink]="['/vm', vm.id, 'view']"
+              title="Ver detalhes"
+            >
+              {{ vm.nome }}
+            </a>
+          </td>
+
+          <td>{{ vm.cpu }}</td>
+          <td>{{ vm.memoria }}</td>
+          <td>{{ vm.disco }}</td>
+
+          <td>
+            <span
+              class="badge"
+              [class.start]="vm.status === 'START'"
+              [class.stop]="vm.status === 'STOP'"
+              [class.susp]="vm.status === 'SUSPEND'"
+            >
+              {{ vm.status }}
+            </span>
+          </td>
+
+          <td>{{ vm.dataCriacao | date: "dd/MM/yyyy HH:mm" }}</td>
 
           <td class="actions-col">
-            <app-button> Editar </app-button>
-            <app-button> Deletar </app-button>
+            <button class="btn" [routerLink]="['/vm', vm.id, 'edit']">
+              Editar
+            </button>
+            <button
+              class="btn danger"
+              (click)="deleteVm(vm.id); $event.stopPropagation()"
+            >
+              Deletar
+            </button>
           </td>
         </tr>
       </tbody>
