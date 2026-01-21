@@ -2,7 +2,7 @@
   <div class="top">
     <h2>Dashboard</h2>
 
-   <div class="actions">
+    <div class="actions">
       <app-button routerLink="/vmCreate"> + Adicionar VM </app-button>
     </div>
 
@@ -37,6 +37,7 @@
       <div class="hint">SUSPEND</div>
     </div>
   </div>
+
   <div class="charts">
     <div class="panel">
       <h3>Status das VMs</h3>
@@ -71,11 +72,7 @@
       <tbody>
         <tr *ngFor="let vm of latestVms">
           <td>
-            <a
-              class="link"
-              [routerLink]="['/vm', vm.id, 'view']"
-              title="Ver detalhes"
-            >
+            <a class="link" [routerLink]="['/vm', vm.id, 'view']">
               {{ vm.nome }}
             </a>
           </td>
@@ -98,15 +95,8 @@
           <td>{{ vm.dataCriacao | date: "dd/MM/yyyy HH:mm" }}</td>
 
           <td class="actions-col">
-            <button class="btn" [routerLink]="['/vm', vm.id, 'edit']">
-              Editar
-            </button>
-            <button
-              class="btn danger"
-              (click)="deleteVm(vm.id); $event.stopPropagation()"
-            >
-              Deletar
-            </button>
+            <app-button [routerLink]="['/vm', vm.id, 'edit']">Editar</app-button>
+            <app-button (click)="deleteVm(vm.id)">Deletar</app-button>
           </td>
         </tr>
       </tbody>

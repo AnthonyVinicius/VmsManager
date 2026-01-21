@@ -26,9 +26,9 @@ input, select {
   padding: 10px;
   font-size: 14px;
   box-sizing: border-box;
-      box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.3);
-    border: 1px solid #ddd; 
-    border-radius: 10px;       
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.3);
+  border: 1px solid #ddd; 
+  border-radius: 10px;       
 }
 
 .grid {

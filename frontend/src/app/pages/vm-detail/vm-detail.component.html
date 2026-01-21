@@ -1,0 +1,96 @@
+<div class="page" *ngIf="vm; else loadingTpl">
+  <header class="header">
+    <div>
+      <h1 class="title">{{ vm.nome }}</h1>
+      <p class="sub">Detalhes da VM e painel de ações</p>
+    </div>
+
+    <app-button [routerLink]="['/dashboard']">Voltar</app-button>
+  </header>
+
+  <div class="alerts">
+    <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
+    <p class="success" *ngIf="successMsg">{{ successMsg }}</p>
+  </div>
+
+  <main class="content">
+    <section class="section">
+      <h2 class="sectionTitle">Informações</h2>
+
+      <div class="infoGrid">
+        <div class="kv">
+          <span class="k">CPU</span>
+          <span class="v">{{ vm.cpu }}</span>
+        </div>
+
+        <div class="kv">
+          <span class="k">Memória</span>
+          <span class="v">{{ vm.memoria }}</span>
+        </div>
+
+        <div class="kv">
+          <span class="k">Disco</span>
+          <span class="v">{{ vm.disco }}</span>
+        </div>
+
+        <div class="kv">
+          <span class="k">Status</span>
+          <span class="v">{{ vm.status }}</span>
+        </div>
+
+        <div class="kv">
+          <span class="k">Criada em</span>
+          <span class="v">{{ vm.dataCriacao | date: "dd/MM/yyyy HH:mm" }}</span>
+        </div>
+      </div>
+
+      <div class="footerLinks">
+        <a class="link" [routerLink]="['/vm', vm.id, 'edit']"
+          >Editar recursos</a
+        >
+      </div>
+    </section>
+
+    <aside class="section">
+      <h2 class="sectionTitle">Ações</h2>
+
+      <div class="actions">
+        <div class="vm-action start" (click)="setStatus('START')">
+          <div class="label">
+            <span class="title">Iniciar VM</span>
+            <span class="desc">Liga a máquina virtual</span>
+          </div>
+        </div>
+
+        <div class="vm-action suspend" (click)="setStatus('SUSPEND')">
+          <div class="label">
+            <span class="title">Pausar VM</span>
+            <span class="desc">Suspende mantendo o estado</span>
+          </div>
+        </div>
+
+        <div class="vm-action stop" (click)="setStatus('STOP')">
+          <div class="label">
+            <span class="title">Parar VM</span>
+            <span class="desc">Desliga completamente</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <section class="section" style="grid-column: 1 / -1">
+      <h2 class="sectionTitle">Histórico de ações</h2>
+
+      <p class="historyEmpty">Ainda não há ações registradas para esta VM.</p>
+    </section>
+  </main>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="page">
+    <div class="section">
+      <div *ngIf="loading">Carregando...</div>
+      <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
+    </div>
+  </div>
+</ng-template>
