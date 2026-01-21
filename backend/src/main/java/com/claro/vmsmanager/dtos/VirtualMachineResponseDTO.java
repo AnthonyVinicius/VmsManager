@@ -3,7 +3,6 @@ package com.claro.vmsmanager.dtos;
 import com.claro.vmsmanager.entities.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
 import java.time.LocalDateTime;
 
 @Getter
@@ -17,4 +16,5 @@ public class VirtualMachineResponseDTO {
     private Integer disco;
     private Status status;
     private LocalDateTime dataCriacao;
+    private Long userId;
 }

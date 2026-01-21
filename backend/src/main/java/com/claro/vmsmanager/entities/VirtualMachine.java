@@ -52,6 +52,10 @@ public class VirtualMachine {
     @Column(nullable = false)
     private Status status;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @PrePersist
     public void prePersist() {
         this.dataCriacao = LocalDateTime.now();

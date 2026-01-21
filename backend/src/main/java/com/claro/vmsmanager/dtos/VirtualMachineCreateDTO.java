@@ -23,5 +23,9 @@ public class VirtualMachineCreateDTO {
     @Min(1)
     private Integer disco;
 
+    @NotNull
+    @Min(1)
+    private long userId;
+
     private Status status;
 }
