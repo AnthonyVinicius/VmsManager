@@ -42,15 +42,23 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
 
     @Override
     @Transactional
-    public VirtualMachineResponseDTO create(VirtualMachineCreateDTO dto) {
-        User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado: id=" + dto.getUserId()));
+    public VirtualMachineResponseDTO create(VirtualMachineCreateDTO dto, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado: id=" + userId));
 
         VirtualMachine vm = VirtualMachineMapper.toEntity(dto);
         vm.setUser(user);
 
         VirtualMachine saved = repository.save(vm);
         return VirtualMachineMapper.toDTO(saved);
+    }
+    @Override
+    @Transactional(readOnly = true)
+    public List<VirtualMachineResponseDTO> getAllByUser(Long userId) {
+        return repository.findByUserId(userId)
+                .stream()
+                .map(VirtualMachineMapper::toDTO)
+                .toList();
     }
 
     @Override

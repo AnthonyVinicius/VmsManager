@@ -6,5 +6,5 @@ import java.util.List;
 
 
 public interface VirtualMachineRepository extends JpaRepository<VirtualMachine, Long> {
-    List<VirtualMachine> findByuserId(Long userId);
+    List<VirtualMachine> findByUserId(Long userId);
 }
