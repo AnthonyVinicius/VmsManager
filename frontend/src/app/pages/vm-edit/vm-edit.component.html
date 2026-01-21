@@ -39,21 +39,21 @@
         <input
           id="memoria"
           type="number"
-          min="1"
+          min="2"
           formControlName="memoria"
         />
         <small
           *ngIf="form.controls.memoria.touched && form.controls.memoria.invalid"
         >
-          Mínimo 1.
+          Mínimo 2GB.
         </small>
       </div>
 
       <div>
         <label for="disco">Disco (GB)</label>
-        <input id="disco" type="number" min="1" formControlName="disco" />
+        <input id="disco" type="number" min="50" formControlName="disco" />
         <small *ngIf="form.controls.disco.touched && form.controls.disco.invalid">
-          Mínimo 1.
+          Mínimo 50GB.
         </small>
       </div>
     </div>

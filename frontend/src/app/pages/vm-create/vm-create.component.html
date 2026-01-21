@@ -19,15 +19,15 @@
       </div>
 
       <div>
-        <label for="memoria">Memória</label>
-        <input id="memoria" type="number" formControlName="memoria" min="1" />
-        <small *ngIf="form.controls.memoria.touched && form.controls.memoria.invalid">Mínimo 1.</small>
+        <label for="memoria">Memória (GB)</label>
+        <input id="memoria" type="number" formControlName="memoria" min="2" />
+        <small *ngIf="form.controls.memoria.touched && form.controls.memoria.invalid">Mínimo 2.</small>
       </div>
 
       <div>
-        <label for="disco">Disco</label>
-        <input id="disco" type="number" formControlName="disco" min="1" />
-        <small *ngIf="form.controls.disco.touched && form.controls.disco.invalid">Mínimo 1.</small>
+        <label for="disco">Disco (GB)</label>
+        <input id="disco" type="number" formControlName="disco" min="50" />
+        <small *ngIf="form.controls.disco.touched && form.controls.disco.invalid">Mínimo 50.</small>
       </div>
     </div>
 

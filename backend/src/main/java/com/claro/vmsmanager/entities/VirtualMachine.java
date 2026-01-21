@@ -35,12 +35,12 @@ public class VirtualMachine {
     private Integer cpu;
 
     @NotNull(message = "Memória é obrigatória")
-    @Min(value = 1, message = "Memória deve ser maior que zero")
+    @Min(value = 2, message = "Memória deve ser maior que zero")
     @Column(nullable = false)
     private Integer memoria;
 
     @NotNull(message = "Disco é obrigatório")
-    @Min(value = 1, message = "Disco deve ser maior que zero")
+    @Min(value = 50, message = "Disco deve ser maior que zero")
     @Column(nullable = false)
     private Integer disco;
 

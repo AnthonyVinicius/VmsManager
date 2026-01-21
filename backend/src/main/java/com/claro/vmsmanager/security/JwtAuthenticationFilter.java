@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -29,8 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) return true;
 
         return path.startsWith("/api/auth/")
-                || (path.equals("/api/users") && "POST".equalsIgnoreCase(request.getMethod()))
-                || path.startsWith("/h2-console/");
+                || (path.equals("/api/users") && "POST".equalsIgnoreCase(request.getMethod()));
     }
 
     @Override
@@ -53,17 +53,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         Long userId = jwtService.extractUserId(token);
-        String userName = jwtService.extractUserName(token);
+        String role = jwtService.extractRole(token);
 
         if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+            var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+
             var auth = new UsernamePasswordAuthenticationToken(
                     userId.toString(),
                     null,
-                    List.of()
+                    authorities
             );
 
             auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
 

@@ -22,14 +22,18 @@ public class JwtService {
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-
-    public String generateToken(Long userId, String userName) {
+    public String generateToken(Long userId, String userName, String role) {
         return Jwts.builder()
                 .setSubject(userId.toString())
                 .claim("name", userName)
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .signWith(key)
                 .compact();
+    }
+
+    public String generateToken(Long userId, String userName) {
+        return generateToken(userId, userName, "USER");
     }
 
     public Long extractUserId(String token) {
@@ -40,10 +44,16 @@ public class JwtService {
         return getClaims(token).get("name", String.class);
     }
 
+    public String extractRole(String token) {
+        return getClaims(token).get("role", String.class);
+    }
+
     public boolean isTokenValid(String token) {
         try {
             Claims claims = getClaims(token);
-            return claims.getSubject() != null && claims.get("name") != null;
+            return claims.getSubject() != null
+                    && claims.get("name") != null
+                    && claims.get("role") != null;
         } catch (Exception ex) {
             return false;
         }
