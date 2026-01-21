@@ -2,7 +2,7 @@
   <div class="top">
     <h2>Dashboard</h2>
 
-    <div class="actions">
+    <div *ngIf="totals.total< 5" class="actions">
       <app-button routerLink="/vmCreate"> + Adicionar VM </app-button>
     </div>
 

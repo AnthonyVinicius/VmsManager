@@ -46,7 +46,7 @@ public class VirtualMachineController {
         String token = auth.substring(7);
         Long userId = jwtService.extractUserId(token);
 
-        VirtualMachineResponseDTO saved = service.create(dto, userId);
+        VirtualMachineResponseDTO saved = service.create(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 

@@ -29,8 +29,8 @@ export class VmEditComponent {
   form = this.fb.group({
     nome: ['', [Validators.required, Validators.minLength(5)]],
     cpu: [1, [Validators.required, Validators.min(1)]],
-    memoria: [1, [Validators.required, Validators.min(1)]],
-    disco: [1, [Validators.required, Validators.min(1)]],
+    memoria: [2, [Validators.required, Validators.min(2)]],
+    disco: [50, [Validators.required, Validators.min(50)]],
   });
 
   ngOnInit() {
