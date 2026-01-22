@@ -1,16 +1,16 @@
 package com.claro.vmsmanager.services;
 
-import com.claro.vmsmanager.dtos.UpdateStatusRequestDTO;
-import com.claro.vmsmanager.dtos.VirtualMachineCreateDTO;
-import com.claro.vmsmanager.dtos.VirtualMachineResponseDTO;
-import com.claro.vmsmanager.dtos.VirtualMachineUpdateDTO;
+import com.claro.vmsmanager.dtos.*;
 import com.claro.vmsmanager.entities.User;
 import com.claro.vmsmanager.entities.VirtualMachine;
+import com.claro.vmsmanager.entities.VmTaskHistory;
 import com.claro.vmsmanager.exceptions.BusinessException;
 import com.claro.vmsmanager.exceptions.ResourceNotFoundException;
 import com.claro.vmsmanager.mapper.VirtualMachineMapper;
+import com.claro.vmsmanager.mapper.VmTaskHistoryMapper;
 import com.claro.vmsmanager.repositories.UserRepository;
 import com.claro.vmsmanager.repositories.VirtualMachineRepository;
+import com.claro.vmsmanager.repositories.VmTaskHistoryRepository;
 import com.claro.vmsmanager.security.SecurityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,34 +24,28 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
 
     private final VirtualMachineRepository repository;
     private final UserRepository userRepository;
+    private final VmTaskHistoryRepository historyRepository;
 
-    public VirtualMachineServiceImpl(VirtualMachineRepository repository, UserRepository userRepository) {
+    public VirtualMachineServiceImpl(VirtualMachineRepository repository, UserRepository userRepository, VmTaskHistoryRepository historyRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
+        this.historyRepository = historyRepository;
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<VirtualMachineResponseDTO> getAll() {
-
         if (SecurityUtils.isAdmin()) {
-            return repository.findAll()
-                    .stream()
-                    .map(VirtualMachineMapper::toDTO)
-                    .toList();
+            return repository.findAll().stream().map(VirtualMachineMapper::toDTO).toList();
         }
 
         Long userId = SecurityUtils.getLoggedUserId();
-        return repository.findByUser_Id(userId)
-                .stream()
-                .map(VirtualMachineMapper::toDTO)
-                .toList();
+        return repository.findByUser_Id(userId).stream().map(VirtualMachineMapper::toDTO).toList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public VirtualMachineResponseDTO getById(Long id) {
-
         if (!SecurityUtils.isAdmin()) {
             Long userId = SecurityUtils.getLoggedUserId();
             if (!repository.existsByIdAndUser_Id(id, userId)) {
@@ -59,10 +53,9 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
             }
         }
 
-        VirtualMachine vm = repository.findById(id)
+        return repository.findById(id)
+                .map(VirtualMachineMapper::toDTO)
                 .orElseThrow(() -> new ResourceNotFoundException("Máquina virtual não encontrada: id=" + id));
-
-        return VirtualMachineMapper.toDTO(vm);
     }
 
     @Override
@@ -78,12 +71,15 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
         }
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado: id=" + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
         VirtualMachine vm = VirtualMachineMapper.toEntity(dto);
         vm.setUser(user);
 
         VirtualMachine saved = repository.save(vm);
+
+        logHistory(user, saved, "CREATE", "VM criada");
+
         return VirtualMachineMapper.toDTO(saved);
     }
 
@@ -91,22 +87,31 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
     @Transactional
     public VirtualMachineResponseDTO update(Long id, VirtualMachineUpdateDTO dto) {
 
-        if (!SecurityUtils.isAdmin()) {
-            Long userId = SecurityUtils.getLoggedUserId();
-            if (!repository.existsByIdAndUser_Id(id, userId)) {
-                throw new ResourceNotFoundException("Máquina virtual não encontrada: id=" + id);
-            }
+        Long userId = SecurityUtils.getLoggedUserId();
+
+        if (!SecurityUtils.isAdmin() && !repository.existsByIdAndUser_Id(id, userId)) {
+            throw new ResourceNotFoundException("Máquina virtual não encontrada: id=" + id);
         }
 
-        VirtualMachine existing = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Máquina virtual não encontrada: id=" + id));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
-        existing.setNome(dto.getNome());
-        existing.setCpu(dto.getCpu());
-        existing.setMemoria(dto.getMemoria());
-        existing.setDisco(dto.getDisco());
+        VirtualMachine vm = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Máquina virtual não encontrada"));
 
-        VirtualMachine saved = repository.save(existing);
+        String before = String.format("cpu:%s mem:%s disk:%s", vm.getCpu(), vm.getMemoria(), vm.getDisco());
+
+        vm.setNome(dto.getNome());
+        vm.setCpu(dto.getCpu());
+        vm.setMemoria(dto.getMemoria());
+        vm.setDisco(dto.getDisco());
+
+        VirtualMachine saved = repository.save(vm);
+
+        String after = String.format("cpu:%s mem:%s disk:%s", saved.getCpu(), saved.getMemoria(), saved.getDisco());
+
+        logHistory(user, saved, "UPDATE", before + " -> " + after);
+
         return VirtualMachineMapper.toDTO(saved);
     }
 
@@ -114,19 +119,26 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
     @Transactional
     public VirtualMachineResponseDTO updateStatus(Long id, UpdateStatusRequestDTO dto) {
 
-        if (!SecurityUtils.isAdmin()) {
-            Long userId = SecurityUtils.getLoggedUserId();
-            if (!repository.existsByIdAndUser_Id(id, userId)) {
-                throw new ResourceNotFoundException("Máquina virtual não encontrada: id=" + id);
-            }
+        Long userId = SecurityUtils.getLoggedUserId();
+
+        if (!SecurityUtils.isAdmin() && !repository.existsByIdAndUser_Id(id, userId)) {
+            throw new ResourceNotFoundException("Máquina virtual não encontrada: id=" + id);
         }
 
-        VirtualMachine existing = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Máquina virtual não encontrada: id=" + id));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
-        existing.setStatus(dto.getStatus());
+        VirtualMachine vm = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Máquina virtual não encontrada"));
 
-        VirtualMachine saved = repository.save(existing);
+        String old = vm.getStatus().toString();
+
+        vm.setStatus(dto.getStatus());
+
+        VirtualMachine saved = repository.save(vm);
+
+        logHistory(user, saved, "UPDATE_STATUS", old + " -> " + dto.getStatus());
+
         return VirtualMachineMapper.toDTO(saved);
     }
 
@@ -134,16 +146,61 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
     @Transactional
     public void delete(Long id) {
 
-        if (!SecurityUtils.isAdmin()) {
-            Long userId = SecurityUtils.getLoggedUserId();
-            if (!repository.existsByIdAndUser_Id(id, userId)) {
-                throw new ResourceNotFoundException("Máquina virtual não encontrada: id=" + id);
-            }
+        Long userId = SecurityUtils.getLoggedUserId();
+
+        if (!SecurityUtils.isAdmin() && !repository.existsByIdAndUser_Id(id, userId)) {
+            throw new ResourceNotFoundException("Máquina virtual não encontrada: id=" + id);
         }
 
-        VirtualMachine existing = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Máquina virtual não encontrada: id=" + id));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
 
-        repository.delete(existing);
+        VirtualMachine vm = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Máquina virtual não encontrada"));
+
+        logHistory(user, vm, "DELETE", "VM deletada");
+
+        repository.delete(vm);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<VmTaskHistoryResponseDTO> getHistory() {
+        if (SecurityUtils.isAdmin()) {
+            return historyRepository.findAllByOrderByCreatedAtDesc()
+                    .stream().map(VmTaskHistoryMapper::toDTO).toList();
+        }
+
+        Long userId = SecurityUtils.getLoggedUserId();
+        return historyRepository.findByUser_IdOrderByCreatedAtDesc(userId)
+                .stream().map(VmTaskHistoryMapper::toDTO).toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<VmTaskHistoryResponseDTO> getHistoryByVm(Long vmId) {
+        if (SecurityUtils.isAdmin()) {
+            return historyRepository.findByVirtualMachine_IdOrderByCreatedAtDesc(vmId)
+                    .stream().map(VmTaskHistoryMapper::toDTO).toList();
+        }
+
+        Long userId = SecurityUtils.getLoggedUserId();
+
+        if (!repository.existsByIdAndUser_Id(vmId, userId)) {
+            throw new ResourceNotFoundException("Máquina virtual não encontrada");
+        }
+
+        return historyRepository.findByVirtualMachine_IdAndUser_IdOrderByCreatedAtDesc(vmId, userId)
+                .stream().map(VmTaskHistoryMapper::toDTO).toList();
+    }
+
+    private void logHistory(User user, VirtualMachine vm, String action, String details) {
+        VmTaskHistory h = new VmTaskHistory();
+        h.setUser(user);
+        h.setVirtualMachine(vm);
+        h.setVmName(vm.getNome());
+        h.setAction(action);
+        h.setDetails(details);
+        historyRepository.save(h);
     }
 }

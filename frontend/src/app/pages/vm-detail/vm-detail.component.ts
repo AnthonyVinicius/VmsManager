@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { VmService, VmResponseDTO } from '../../services/vm.service';
+import { VmService, VmResponseDTO, VmTaskHistoryResponseDTO } from '../../services/vm.service';
 import { ButtonComponent } from "../../shared/ui/button/button.component";
 
 @Component({
@@ -16,15 +16,21 @@ export class VmDetailComponent {
   private vmService = inject(VmService);
 
   loading = false;
+  historyLoading = false;
+
   errorMsg = '';
   successMsg = '';
 
   vm?: VmResponseDTO;
   vmId!: number;
 
+  history: VmTaskHistoryResponseDTO[] = [];
+  historyError = '';
+
   ngOnInit() {
     this.vmId = Number(this.route.snapshot.paramMap.get('id'));
     this.load();
+    this.loadHistory();
   }
 
   load() {
@@ -45,6 +51,23 @@ export class VmDetailComponent {
     });
   }
 
+  loadHistory() {
+    this.historyLoading = true;
+    this.historyError = '';
+
+    this.vmService.getHistoryByVm(this.vmId).subscribe({
+      next: (items) => {
+        this.history = items;
+        this.historyLoading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.historyError = 'Não foi possível carregar o histórico.';
+        this.historyLoading = false;
+      },
+    });
+  }
+
   setStatus(status: VmResponseDTO['status']) {
     if (!this.vm) return;
 
@@ -52,6 +75,7 @@ export class VmDetailComponent {
       next: (updated) => {
         this.vm = updated;
         this.successMsg = `Status atualizado para ${status}.`;
+        this.loadHistory();
       },
       error: (err) => {
         console.error(err);

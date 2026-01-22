@@ -147,3 +147,66 @@
   .content { grid-template-columns: 1fr; }
   .infoGrid { grid-template-columns: 1fr; }
 }
+
+.historyList {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.historyItem {
+  border: 1px solid #edf2f7;
+  border-radius: 14px;
+  background: #fafafa;
+  padding: 12px 14px;
+}
+
+.historyTop {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.historyTop strong {
+  font-size: 14px;
+  letter-spacing: 0.2px;
+}
+
+.historyTop span {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.historyMeta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.historyDetails {
+  font-size: 13px;
+  color: #0f172a;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.historyItem hr {
+  border: 0;
+  border-top: 1px solid #e2e8f0;
+  margin: 10px 0 0;
+}
+
+.section .error {
+  margin: 0 0 10px;
+}
+
+@media (max-width: 900px) {
+  .historyItem {
+    padding: 12px;
+  }
+}

@@ -45,9 +45,7 @@
       </div>
 
       <div class="footerLinks">
-        <a class="link" [routerLink]="['/vm', vm.id, 'edit']"
-          >Editar recursos</a
-        >
+        <a class="link" [routerLink]="['/vm', vm.id, 'edit']">Editar recursos</a>
       </div>
     </section>
 
@@ -81,7 +79,32 @@
     <section class="section" style="grid-column: 1 / -1">
       <h2 class="sectionTitle">Histórico de ações</h2>
 
-      <p class="historyEmpty">Ainda não há ações registradas para esta VM.</p>
+      <p class="error" *ngIf="historyError">{{ historyError }}</p>
+      <div *ngIf="historyLoading">Carregando histórico...</div>
+
+      <p class="historyEmpty" *ngIf="!historyLoading && !historyError && history.length === 0">
+        Ainda não há ações registradas para esta VM.
+      </p>
+
+      <div class="historyList" *ngIf="!historyLoading && !historyError && history.length > 0">
+        <div class="historyItem" *ngFor="let h of history">
+          <div class="historyTop">
+            <strong>{{ h.acao }}</strong>
+            <span>• {{ h.nomeMaquina }}</span>
+          </div>
+
+          <div class="historyMeta">
+            <span>{{ h.usuario }}</span>
+            <span>• {{ h.dataHora | date: "dd/MM/yyyy HH:mm" }}</span>
+          </div>
+
+          <div class="historyDetails" *ngIf="h.detalhes">
+            {{ h.detalhes }}
+          </div>
+
+          <hr />
+        </div>
+      </div>
     </section>
   </main>
 </div>
