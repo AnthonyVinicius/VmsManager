@@ -21,6 +21,14 @@ export interface VmCreateDTO {
   status: 'STOP';
 }
 
+export type VmTaskHistoryResponseDTO = {
+  usuario: string;
+  dataHora: string; 
+  nomeMaquina: string;
+  acao: string;
+  detalhes?: string;
+};
+
 export interface VmUpdateDTO {
   nome: string;
   cpu: number;
@@ -57,5 +65,13 @@ export class VmService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
-  
+
+  getHistory(): Observable<VmTaskHistoryResponseDTO[]> {
+    return this.http.get<VmTaskHistoryResponseDTO[]>(`${this.baseUrl}/history`);
+  }
+
+  getHistoryByVm(id: number): Observable<VmTaskHistoryResponseDTO[]> {
+    return this.http.get<VmTaskHistoryResponseDTO[]>(`${this.baseUrl}/${id}/history`);
+  }
 }
+

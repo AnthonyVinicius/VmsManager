@@ -56,4 +56,14 @@ public class VirtualMachineController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/history")
+    public ResponseEntity<List<VmTaskHistoryResponseDTO>> getHistory() {
+        return ResponseEntity.ok(service.getHistory());
+    }
+
+    @GetMapping("/{id}/history")
+    public ResponseEntity<List<VmTaskHistoryResponseDTO>> getHistoryByVm(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getHistoryByVm(id));
+    }
 }
