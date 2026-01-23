@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -56,10 +58,13 @@ public class VirtualMachine {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @OneToMany(mappedBy = "virtualMachine", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<VmTaskHistory> history = new ArrayList<>();
+
     @PrePersist
     public void prePersist() {
         this.dataCriacao = LocalDateTime.now();
-        if (this.status == null) this.status = Status.STOP; // default
+        if (this.status == null) this.status = Status.STOP;
     }
 }
 
