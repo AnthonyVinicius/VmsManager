@@ -158,7 +158,6 @@ public class VirtualMachineServiceImpl implements VirtualMachineService {
         VirtualMachine vm = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Máquina virtual não encontrada"));
 
-        logHistory(user, vm, "DELETE", "VM deletada");
 
         repository.delete(vm);
     }
